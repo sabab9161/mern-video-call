@@ -1,0 +1,11 @@
+
+> video-call-backend@1.0.0 start
+> node src/server.js
+
+MongoDB connected
+Meeting reminder job started
+Server running on http://localhost:5000
+PeerJS running on http://localhost:5000/peerjs/myapp
+EMAIL_USER: hussain001233098@gmail.com
+Sending OTP to: otp1670187000@yahoo.com
+EMAIL_USER: hussain001233098@gmail.com
