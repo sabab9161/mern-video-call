@@ -35,11 +35,9 @@ configureSocket(io);
 
 connectDB()
   .then(() => {
-    startReminderJob();
-
-    server.listen(port, "localhost", () => {
-      console.log(`Server running on http://localhost:${port}`);
-      console.log(`PeerJS running on http://localhost:${port}/peerjs/myapp`);
+    server.listen(port, "0.0.0.0", () => {
+      console.log(`Server running on port ${port}`);
+      console.log(`PeerJS running on /peerjs`);
     });
   })
   .catch((error) => {
