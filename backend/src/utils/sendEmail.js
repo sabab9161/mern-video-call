@@ -1,66 +1,37 @@
 import nodemailer from "nodemailer";
 
-const requiredEmailConfig = [
-  "EMAIL_USER",
-  "EMAIL_PASSWORD",
-  "EMAIL_FROM_NAME",
-  "EMAIL_FROM_ADDRESS",
-];
+const sendEmail = async ({ to, subject, html, text }) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
 
-const getTransporter = () => {
-  const missingKeys = requiredEmailConfig.filter((key) => !process.env[key]);
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
 
-  if (missingKeys.length) {
-    throw new Error(`Email configuration missing: ${missingKeys.join(", ")}`);
+      connectionTimeout: 60000,
+      greetingTimeout: 60000,
+      socketTimeout: 60000,
+    });
+
+    await transporter.verify();
+
+    const info = await transporter.sendMail({
+      from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM_ADDRESS}>`,
+      to,
+      subject,
+      text,
+      html,
+    });
+
+    console.log("Email sent:", info.messageId);
+
+    return info;
+  } catch (error) {
+    console.error("OTP email error:", error);
+    throw error;
   }
-
-  console.log("EMAIL_USER:", process.env.EMAIL_USER);
-
-  return nodemailer.createTransport({
-    service: "gmail",
-    host: process.env.EMAIL_HOST || "smtp.gmail.com",
-    port: Number(process.env.EMAIL_PORT || 465),
-    secure: true,
-
-    // Important for Render SMTP
-    family: 4,
-
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-
-    tls: {
-      rejectUnauthorized: false,
-    },
-  });
-};
-
-const formatFromAddress = () => {
-  const fromName = process.env.EMAIL_FROM_NAME || "MeetBridge";
-  const fromAddress = process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER;
-
-  return `"${fromName}" <${fromAddress}>`;
-};
-
-const sendEmail = async ({ to, subject, text, html }) => {
-  const recipients = Array.isArray(to)
-    ? to.filter(Boolean)
-    : [to].filter(Boolean);
-
-  if (!recipients.length) {
-    throw new Error("At least one email recipient is required");
-  }
-
-  const transporter = getTransporter();
-
-  return transporter.sendMail({
-    from: formatFromAddress(),
-    to: recipients.join(", "),
-    subject,
-    text,
-    html,
-  });
 };
 
 export default sendEmail;
