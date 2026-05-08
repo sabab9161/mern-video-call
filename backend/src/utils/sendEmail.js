@@ -6,14 +6,18 @@ const requiredEmailConfig = [
   "EMAIL_USER",
   "EMAIL_PASSWORD",
   "EMAIL_FROM_NAME",
-  "EMAIL_FROM_ADDRESS"
+  "EMAIL_FROM_ADDRESS",
 ];
 
 const getTransporter = () => {
-  const missingKeys = requiredEmailConfig.filter((key) => !process.env[key]);
+  const missingKeys = requiredEmailConfig.filter(
+    (key) => !process.env[key]
+  );
 
   if (missingKeys.length) {
-    throw new Error(`Email configuration missing: ${missingKeys.join(", ")}`);
+    throw new Error(
+      `Email configuration missing: ${missingKeys.join(", ")}`
+    );
   }
 
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
@@ -21,6 +25,7 @@ const getTransporter = () => {
   }
 
   const port = Number(process.env.EMAIL_PORT);
+
   if (!Number.isInteger(port)) {
     throw new Error("EMAIL_PORT must be a valid number");
   }
@@ -41,24 +46,34 @@ const getTransporter = () => {
     host: process.env.EMAIL_HOST,
     port,
     secure: process.env.EMAIL_SECURE === "true",
+
+    // Force IPv4 for Render
+    family: 4,
+
     tls: {
-      rejectUnauthorized: process.env.EMAIL_TLS_REJECT_UNAUTHORIZED === "true"
+      rejectUnauthorized: false,
     },
+
     auth: {
       user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
-    }
+      pass: process.env.EMAIL_PASSWORD,
+    },
   });
 };
 
 const formatFromAddress = () => {
   const fromName = process.env.EMAIL_FROM_NAME || "MeetBridge";
-  const fromAddress = process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER;
+
+  const fromAddress =
+    process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER;
+
   return `"${fromName}" <${fromAddress}>`;
 };
 
 const sendEmail = async ({ to, subject, text, html }) => {
-  const recipients = Array.isArray(to) ? to.filter(Boolean) : [to].filter(Boolean);
+  const recipients = Array.isArray(to)
+    ? to.filter(Boolean)
+    : [to].filter(Boolean);
 
   if (!recipients.length) {
     throw new Error("At least one email recipient is required");
@@ -71,7 +86,7 @@ const sendEmail = async ({ to, subject, text, html }) => {
     to: recipients.join(", "),
     subject,
     text,
-    html
+    html,
   });
 };
 
