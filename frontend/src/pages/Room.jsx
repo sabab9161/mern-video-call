@@ -21,7 +21,9 @@ import Peer from "peerjs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-import api, { API_ORIGIN } from "../utils/api.js";
+import api from "../utils/api.js";
+const API_ORIGIN =
+  import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
 import { createSocket } from "../utils/socket.js";
 
 const peerConfig = {
