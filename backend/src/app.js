@@ -8,7 +8,6 @@ import roomRoutes from "./routes/roomRoutes.js";
 import translateRoutes from "./routes/translateRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
-dotenv.config({ path: fileURLToPath(new URL("../.env", import.meta.url)) });
 
 const app = express();
 
