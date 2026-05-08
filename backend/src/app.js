@@ -10,9 +10,22 @@ import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://mern-video-call-df2n.vercel.app",
+  "https://mern-video-call-pd3s.vercel.app",
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
@@ -51,7 +64,9 @@ app.use((err, _req, res, _next) => {
 
   res.status(err.status || 500).json({
     message: err.message || "Server error",
-    ...(process.env.NODE_ENV !== "production" ? { error: err.stack } : {}),
+    ...(process.env.NODE_ENV !== "production"
+      ? { error: err.stack }
+      : {}),
   });
 });
 
