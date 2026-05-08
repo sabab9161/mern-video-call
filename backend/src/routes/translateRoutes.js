@@ -14,6 +14,7 @@ const dictionary = {
   meeting: "मीटिंग",
   call: "कॉल",
   please: "कृपया"
+  
 };
 
 const localTranslate = (text, target) => {
